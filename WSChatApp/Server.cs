@@ -69,11 +69,12 @@ namespace WSChatApp
                 await webSocket.ReceiveAsync(new ArraySegment<byte>(receivedBytes), CancellationToken.None);
 
                 var message = Encoding.Default.GetString(receivedBytes);
+                message = message.Replace("\0", string.Empty);
 
                 foreach (var connectionId in Connections.Keys)
                 {
                     await Connections[connectionId].SendAsync(
-                        new ArraySegment<byte>(Encoding.UTF8.GetBytes(id+" "+message),0,12),
+                        new ArraySegment<byte>(Encoding.UTF8.GetBytes(id+" "+message),0,message.Length),
                         WebSocketMessageType.Text, true, CancellationToken.None);
                 }
 
